@@ -1,5 +1,5 @@
 const meta = {
-  name: "veniceai",
+  name: "example",
   version: "1.0.1",
   description: "AI response API powered by VeniceAI",
   author: "bj tricks", 
