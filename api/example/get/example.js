@@ -1,9 +1,9 @@
-const fetch = require('node-fetch'); // Required in Node.js
+const fetch = require('node-fetch'); // Add only if you're using Node.js
 
 const meta = {
   name: "example",
   version: "1.0.0",
-  description: "A simple example API that demonstrates basic functionality",
+  description: "A simple example API that demonstrates basic functionality by Bj tricks",
   author: "bj tricks",
   method: "get",
   category: "example",
@@ -15,32 +15,33 @@ async function onStart({ res, req }) {
 
   if (!text) {
     return res.status(400).json({
-      status: false,
-      error: 'Text parameter is required'
+      success: false,
+      error: "Text parameter is required",
+      description: meta.description
     });
   }
 
   try {
-    const url = `${meta.path}${encodeURIComponent(text)}`;
-    console.log("➡️ Fetching URL:", url); // Debug log
+    const apiUrl = `${meta.path}${encodeURIComponent(text)}`;
+    const response = await fetch(apiUrl);
 
-    const fetchRes = await fetch(url);
-
-    if (!fetchRes.ok) {
-      throw new Error(`HTTP error! status: ${fetchRes.status}`);
+    if (!response.ok) {
+      // Show your error format if API fails
+      return res.status(response.status).json({
+        success: false,
+        error: `HTTP error! status: ${response.status}`,
+        description: meta.description
+      });
     }
 
-    const data = await fetchRes.json();
-    console.log("✅ API Response:", data); // Debug log
-
-    return res.json(data);
+    const result = await response.json();
+    return res.json(result); // Return your API response as-is
   } catch (err) {
-    console.error("❌ Fetch failed:", err.message); // Debug log
-
     return res.status(500).json({
       success: false,
-      error: 'API request failed',
-      message: err.message
+      error: "Internal server error",
+      message: err.message,
+      description: meta.description
     });
   }
 }
