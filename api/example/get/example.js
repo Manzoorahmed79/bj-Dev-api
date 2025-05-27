@@ -1,3 +1,5 @@
+const fetch = require('node-fetch'); // <-- only if you're running in Node.js
+
 const meta = {
   name: "example",
   version: "1.0.0",
@@ -19,14 +21,19 @@ async function onStart({ res, req }) {
   }
 
   try {
-    const fetchRes = await fetch(`${meta.path}${encodeURIComponent(text)}`);
-    const data = await fetchRes.json();
+    const url = meta.path + encodeURIComponent(text);
+    const fetchRes = await fetch(url);
 
+    if (!fetchRes.ok) {
+      throw new Error(`HTTP error! status: ${fetchRes.status}`);
+    }
+
+    const data = await fetchRes.json();
     return res.json(data);
   } catch (err) {
     return res.status(500).json({
       success: false,
-      error: 'Internal server error',
+      error: 'API request failed',
       message: err.message
     });
   }
