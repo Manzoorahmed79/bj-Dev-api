@@ -1,10 +1,10 @@
 const meta = {
   name: "example",
-  version: "1.0.1",
-  description: "AI response API powered by VeniceAI",
+  version: "1.0.0",
+  description: "A simple example API that demonstrates basic functionality",
   author: "bj tricks", 
   method: "get",
-  category: "ai",
+  category: "example",
   path: "https://bj-veniceai.ma-coder-x.workers.dev/?q="
 };
 
@@ -22,27 +22,12 @@ async function onStart({ res, req }) {
     const fetchRes = await fetch(`${meta.path}${encodeURIComponent(text)}`);
     const data = await fetchRes.json();
 
-    if (!data.success) {
-      return res.status(500).json({
-        status: false,
-        error: 'API returned an error',
-        raw: data
-      });
-    }
-
-    return res.json({
-      status: true,
-      role: data.role,
-      response: data.content,
-      timestamp: new Date().toISOString(),
-      join: data.join,
-      creator: data.Dev
-    });
+    return res.json(data);
   } catch (err) {
     return res.status(500).json({
-      status: false,
+      success: false,
       error: 'Internal server error',
-      details: err.message
+      message: err.message
     });
   }
 }
