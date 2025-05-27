@@ -1,15 +1,14 @@
 const meta = {
-  name: "example",
-  version: "1.0.0",
-  description: "A simple example API that demonstrates basic functionality",
+  name: "veniceai",
+  version: "1.0.1",
+  description: "AI response API powered by VeniceAI",
   author: "bj tricks", 
   method: "get",
-  category: "example",
+  category: "ai",
   path: "https://bj-veniceai.ma-coder-x.workers.dev/?q="
 };
 
 async function onStart({ res, req }) {
-  // Extract the 'text' parameter from the query string
   const { text } = req.query;
 
   if (!text) {
@@ -19,17 +18,33 @@ async function onStart({ res, req }) {
     });
   }
 
-  // Process the text (in this example, we'll just reverse it)
-  const reversed = text.split('').reverse().join('');
+  try {
+    const fetchRes = await fetch(`${meta.path}${encodeURIComponent(text)}`);
+    const data = await fetchRes.json();
 
-  // Return a JSON response
-  return res.json({
-    original: text,
-    reversed: reversed,
-    length: text.length,
-    timestamp: new Date().toISOString(),
-    powered_by: "Wataru API"
-  });
+    if (!data.success) {
+      return res.status(500).json({
+        status: false,
+        error: 'API returned an error',
+        raw: data
+      });
+    }
+
+    return res.json({
+      status: true,
+      role: data.role,
+      response: data.content,
+      timestamp: new Date().toISOString(),
+      join: data.join,
+      creator: data.Dev
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: false,
+      error: 'Internal server error',
+      details: err.message
+    });
+  }
 }
 
 module.exports = { meta, onStart };
