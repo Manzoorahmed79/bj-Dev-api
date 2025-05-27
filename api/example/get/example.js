@@ -2,10 +2,10 @@ const meta = {
   name: "example",
   version: "1.0.0",
   description: "A simple example API that demonstrates basic functionality",
-  author: "Your Name", 
+  author: "bj tricks", 
   method: "get",
   category: "example",
-  path: "/example?text="
+  path: "https://bj-veniceai.ma-coder-x.workers.dev/?q="
 };
 
 async function onStart({ res, req }) {
